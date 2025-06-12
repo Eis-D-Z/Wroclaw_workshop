@@ -3,15 +3,14 @@ module contracts::hello_world;
 use std::string::String;
 
 // Errors
+const ENotAllowed: u64 = 101;
 
-// Constants
-const MS_IN_DAY: u64 = 24 * 60 * 60 * 1000;
 // Structs
 
 public struct MessageContainer {
     id: UID,
     message: String,
-    author: address
+    author: address,
 } has key, store;
 
 
@@ -28,10 +27,13 @@ public fun new_container(message: String, ctx: &mut TxContext): MessageContainer
     container
 }
 
-public fun change_message(container: &mut MessageContainer, message: String) {
+public fun change_message(container: &mut MessageContainer, message: String, ctx: &TxContext) {
     container.message = message;
 
     // change author
+    assert!(ctx.sender() != @0x2, ENotAllowed);
+
+    change_author(container, ctx.sender());
 }
 
 public fun get_message(container: &MessageContainer): String {
@@ -42,5 +44,12 @@ fun change_author(container: &mut MessageContainer, author: address) {
     container.author = author;
 }
 
+// getters
+#[test_only]
+public fun message(self: &MessageContainer): String {
+    self.message
+}
+
 
 // Test helpers
+
