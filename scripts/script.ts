@@ -150,7 +150,8 @@ const newContainerBuildOnly = async () => {
         arguments: [
             tx.pure.string("My new message"),
             
-        ]
+        ],
+        typeArguments: []
     });
 
     tx.transferObjects([object], tx.pure.address(keypair.toSuiAddress()));
